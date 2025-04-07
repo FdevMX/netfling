@@ -1,0 +1,45 @@
+@import "tailwindcss";
+
+:root {
+  --netflix-red: #e50914;
+  --netflix-black: #000000;
+  --netflix-dark-gray: #232323;
+  --netflix-gray: #2d2d2d;
+  --netflix-light-gray: #808080;
+  --netflix-purple: #1a1a3a;
+}
+
+html,
+body {
+  font-family: 'Netflix Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  background-color: var(--netflix-black);
+  color: white;
+  margin: 0;
+  padding: 0;
+}
+
+input {
+  outline: none;
+}
+
+/* Netflix Arch Styling */
+.netflix-arch-container {
+  position: relative;
+  width: 100%;
+  height: 2px;
+  overflow: visible;
+}
+
+.netflix-arch {
+  position: absolute;
+  top: 0;
+  left: -5%;
+  right: -5%;
+  width: 110%;
+  height: 1000px;
+  border-radius: 50%;
+  background: linear-gradient(90deg, rgba(229, 9, 20, 0.7) 0%, rgba(255, 0, 128, 0.7) 50%, rgba(229, 9, 20, 0.7) 100%);
+  transform: translateY(-99.7%);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  z-index: 1;
+}
